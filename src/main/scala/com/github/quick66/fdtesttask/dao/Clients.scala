@@ -5,8 +5,10 @@ import com.github.quick66.fdtesttask.entities.{BuyOrder, Client, Papers, SellOrd
 class Clients(underlyingMap: Map[String, Client]) {
 
   def applySale(sell: SellOrder, buy: BuyOrder): Unit = {
-    underlyingMap(sell.client).sell(sell)
-    underlyingMap(buy.client).buy(buy)
+    if (sell.client != buy.client) {
+      underlyingMap(sell.client).sell(sell)
+      underlyingMap(buy.client).buy(buy)
+    }
   }
 
   override def toString: String = {

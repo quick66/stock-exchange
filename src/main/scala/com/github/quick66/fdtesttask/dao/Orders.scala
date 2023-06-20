@@ -6,10 +6,12 @@ import scala.collection.mutable
 
 class Orders[T <: Order](underlying: mutable.Map[OrderParams, mutable.Queue[T]] = mutable.Map.empty[OrderParams, mutable.Queue[T]]) {
 
-  def pop(params: OrderParams, onSuccess: T => Unit, onNotFound: => Unit): Unit = {
+  def pop(params: OrderParams, client: String, onSuccess: T => Unit, onNotFound: => Unit): Unit = {
     underlying.get(params) match {
-      case Some(sales) if sales.nonEmpty => onSuccess(sales.dequeue())
-      case _ => onNotFound
+      case Some(orders) if orders.nonEmpty =>
+        orders.dequeueFirst(_.client != client).map(onSuccess).getOrElse(onNotFound)
+      case _ =>
+        onNotFound
     }
   }
 
